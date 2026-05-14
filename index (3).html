@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XII Result Dashboard 2025–26 | NLK Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08111f;--surface:#0d1b2e;--surface2:#122239;--border:#1a3050;
+  --accent:#00c8ff;--accent3:#9b5de5;--accent4:#00e5a0;--accent5:#ffbe0b;
+  --text:#dde8f5;--muted:#5a7a9a;
+  --sci:#00c8ff;--com:#ff9f1c;--pass:#00e5a0;--comp:#ffbe0b;--fail:#ff5e57;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 8%,rgba(0,200,255,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(155,93,229,.06) 0%,transparent 60%),
+    linear-gradient(rgba(0,200,255,.012) 1px,transparent 1px) 0 0/44px 44px,
+    linear-gradient(90deg,rgba(0,200,255,.012) 1px,transparent 1px) 0 0/44px 44px;}
+.wrap{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:22px 28px}
+
+/* HEADER */
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.hdr-l .badge{font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.hdr-l h1{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:2px;line-height:1;background:linear-gradient(120deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-l .sub{font-size:11px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.hdr-r{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.clock{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);letter-spacing:2px}
+.live-row{display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--pass);box-shadow:0 0 8px var(--pass);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+.live-lbl{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
+.tab{padding:8px 20px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-family:'Sora',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--surface2);color:#fff;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.tab.t-sci.active{color:var(--sci)}
+.tab.t-com.active{color:var(--com)}
+.tab.t-top.active{color:var(--accent5)}
+
+/* SLICERS */
+.slicers{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.sl{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.div{width:1px;height:24px;background:var(--border);margin:0 4px}
+.sbtn{padding:5px 13px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:'Sora',sans-serif;font-size:12px;cursor:pointer;transition:all .18s;font-weight:500}
+.sbtn:hover{border-color:var(--accent);color:var(--accent)}
+.sbtn.on{background:var(--on-col,var(--accent));border-color:var(--on-col,var(--accent));color:#08111f;font-weight:700;box-shadow:0 0 12px rgba(0,200,255,.2)}
+.sbtn.sci.on{--on-col:var(--sci)}
+.sbtn.com.on{--on-col:var(--com)}
+.sbtn.gold.on{--on-col:var(--accent5)}
+.sinp{flex:1;min-width:180px;max-width:260px;padding:6px 13px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Sora',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+.sinp::placeholder{color:var(--muted)}
+.sinp:focus{border-color:var(--accent)}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:17px 18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc);border-radius:12px 12px 0 0}
+.kpi::after{content:'';position:absolute;bottom:-18px;right:-8px;width:66px;height:66px;border-radius:50%;background:var(--kc);opacity:.05}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.kpi-ico{font-size:19px;margin-bottom:7px}
+.kpi-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--kc);line-height:1}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* GRID */
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:13px}
+.g2{display:grid;grid-template-columns:1.5fr 1fr;gap:13px;margin-bottom:13px}
+.g2r{display:grid;grid-template-columns:1fr 1.5fr;gap:13px;margin-bottom:13px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.cttl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.cttl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* DIST */
+.dist-wrap{display:flex;flex-direction:column;gap:9px}
+.drow{display:flex;align-items:center;gap:9px}
+.dlbl{font-size:10px;color:var(--muted);width:70px;flex-shrink:0;font-family:'JetBrains Mono',monospace;text-align:right}
+.dtrk{flex:1;height:22px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.dfill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:700;color:#08111f;font-family:'JetBrains Mono',monospace;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+.dcount{width:28px;font-size:11px;font-family:'JetBrains Mono',monospace;flex-shrink:0;text-align:right}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.leg{display:flex;flex-direction:column;gap:10px}
+.lrow{display:flex;align-items:center;gap:8px;font-size:12px}
+.ldot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.llbl{color:var(--muted);font-size:11px}
+.lval{font-family:'JetBrains Mono',monospace;font-weight:700;margin-left:auto;padding-left:14px}
+
+/* SUBJECT BARS */
+.srows{display:flex;flex-direction:column;gap:8px}
+.srow{display:flex;align-items:center;gap:9px}
+.snm{font-size:10px;color:var(--muted);width:110px;flex-shrink:0;text-align:right}
+.strk{flex:1;height:17px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.sfill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:9px;font-weight:700;color:#08111f;font-family:'JetBrains Mono',monospace}
+.sval{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text);width:30px;flex-shrink:0}
+
+/* BRANCH */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bblk{background:var(--surface2);border-radius:8px;padding:13px;border:1px solid var(--border)}
+.bnm{font-family:'Bebas Neue',sans-serif;font-size:17px;margin-bottom:9px;letter-spacing:1px}
+.bstat{display:flex;justify-content:space-between;margin-bottom:5px;align-items:center}
+.bsl{font-size:10px;color:var(--muted)}
+.bsv{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600}
+
+/* STREAM SUMMARY */
+.stream-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sc{border-radius:10px;padding:16px;border-width:1.5px;border-style:solid}
+.sc.sci{background:rgba(0,200,255,.05);border-color:rgba(0,200,255,.3)}
+.sc.com{background:rgba(255,159,28,.05);border-color:rgba(255,159,28,.3)}
+.sc-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px}
+.sc-ttl{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:11px}
+.sc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sc-s .v{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1}
+.sc-s .l{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+
+/* TOPPER CARDS */
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.tcard{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px}
+.tsubj{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between}
+.t1row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.t1name{font-size:11px;font-weight:700;line-height:1.3;max-width:120px}
+.t1score{font-family:'Bebas Neue',sans-serif;font-size:26px}
+.t1branch{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;display:inline-block}
+.t2rows{margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:flex;flex-direction:column;gap:5px}
+.t2row{display:flex;align-items:center;justify-content:space-between}
+.t2name{font-size:10px;color:var(--muted)}
+.t2score{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 11px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer}
+th:hover{color:var(--accent)}
+td{padding:8px 11px;border-bottom:1px solid rgba(26,48,80,.4);vertical-align:middle}
+tr:hover td{background:rgba(0,200,255,.025)}
+.rnk{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--muted)}
+.r1{color:#ffbe0b}.r2{color:#94a3b8}.r3{color:#f97316}
+.pill{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.5px}
+.pp{background:rgba(0,229,160,.12);color:var(--pass)}
+.pc{background:rgba(255,190,11,.12);color:var(--comp)}
+.pe{background:rgba(255,94,87,.12);color:var(--fail)}
+.vp{font-size:9px;padding:2px 7px;border-radius:3px;font-weight:700;background:rgba(0,200,255,.1);color:var(--sci)}
+.ac{font-size:9px;padding:2px 7px;border-radius:3px;font-weight:700;background:rgba(155,93,229,.1);color:var(--accent3)}
+.ssci{font-size:9px;padding:2px 7px;border-radius:3px;font-weight:700;background:rgba(0,200,255,.1);color:var(--sci)}
+.scom{font-size:9px;padding:2px 7px;border-radius:3px;font-weight:700;background:rgba(255,159,28,.1);color:var(--com)}
+.mbar{display:flex;align-items:center;gap:6px}
+.mtrk{width:70px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.mfill{height:100%;border-radius:2px}
+.pnum{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700}
+.pginfo{font-size:10px;color:var(--muted);text-align:right;margin-bottom:5px;font-family:'JetBrains Mono',monospace}
+.pg{display:flex;gap:5px;justify-content:flex-end;margin-top:9px}
+.pgb{padding:3px 10px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s}
+.pgb:hover,.pgb.on{border-color:var(--accent);color:var(--accent)}
+.pgb:disabled{opacity:.3;cursor:not-allowed}
+
+.section{display:none}.section.active{display:block}
+.footer{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.kpi{animation:fadeUp .5s ease both}
+.kpi:nth-child(1){animation-delay:.04s}.kpi:nth-child(2){animation-delay:.08s}.kpi:nth-child(3){animation-delay:.12s}.kpi:nth-child(4){animation-delay:.16s}.kpi:nth-child(5){animation-delay:.2s}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(3,1fr)}.g3,.g2,.g2r{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,1fr)}.stream-pair{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="badge">◆ NLK ACADEMY · CBSE BOARD · CENTRE 849142 · KANPUR</div>
+    <h1>XII Result Dashboard</h1>
+    <div class="sub">Academic Session 2025–26 &nbsp;|&nbsp; Vishnupuri + Academy &nbsp;|&nbsp; Analysis Based on Best-5 Subjects %</div>
+  </div>
+  <div class="hdr-r">
+    <div class="clock" id="clock">00:00:00</div>
+    <div class="live-row"><div class="dot"></div><span class="live-lbl">LIVE ANALYSIS</span></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="goTab('overall',this)">📊 Overall</button>
+  <button class="tab t-sci" onclick="goTab('science',this)">🔬 Science Stream</button>
+  <button class="tab t-com" onclick="goTab('commerce',this)">📈 Commerce Stream</button>
+  <button class="tab t-top" onclick="goTab('toppers',this)">🏆 Subject Toppers</button>
+</div>
+
+<!-- ══════ OVERALL ══════ -->
+<div class="section active" id="tab-overall">
+  <div class="slicers">
+    <span class="sl">Branch</span>
+    <button class="sbtn on" onclick="sl('o','br','ALL',this)">All</button>
+    <button class="sbtn" onclick="sl('o','br','VISHNUPURI',this)">Vishnupuri</button>
+    <button class="sbtn" onclick="sl('o','br','ACADEMY',this)">Academy</button>
+    <div class="div"></div>
+    <span class="sl">Status</span>
+    <button class="sbtn on" onclick="sl('o','st','ALL',this)">All</button>
+    <button class="sbtn" onclick="sl('o','st','Passed',this)">Passed</button>
+    <button class="sbtn" onclick="sl('o','st','Compartment',this)">Compartment</button>
+    <button class="sbtn" onclick="sl('o','st','Essential repeat',this)">Ess. Repeat</button>
+    <div class="div"></div>
+    <span class="sl">Score Range</span>
+    <button class="sbtn on" onclick="sl('o','rn','ALL',this)">All</button>
+    <button class="sbtn" onclick="sl('o','rn','90-100',this)">90–100%</button>
+    <button class="sbtn" onclick="sl('o','rn','80-90',this)">80–90%</button>
+    <button class="sbtn" onclick="sl('o','rn','70-80',this)">70–80%</button>
+    <button class="sbtn" onclick="sl('o','rn','60-70',this)">60–70%</button>
+    <button class="sbtn" onclick="sl('o','rn','50-60',this)">50–60%</button>
+    <button class="sbtn" onclick="sl('o','rn','0-50',this)">&lt;50%</button>
+    <div class="div"></div>
+    <input class="sinp" placeholder="🔍 Search student…" oninput="srch('o',this.value)">
+  </div>
+  <div class="kpi-row" id="o-kpis"></div>
+  <div class="g3">
+    <div class="card"><div class="cttl">📊 Best-5 Score Distribution</div><div id="o-dist"></div></div>
+    <div class="card"><div class="cttl">📋 Result Breakdown</div><div class="donut-wrap"><svg width="124" height="124" viewBox="0 0 124 124" id="o-donut"></svg><div class="leg" id="o-leg"></div></div></div>
+    <div class="card"><div class="cttl">🏫 Branch Comparison</div><div class="bgrid" id="o-branch"></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="cttl">📚 Overall Subject Averages</div><div id="o-subj"></div></div>
+    <div class="card">
+      <div class="cttl">🎓 Stream Overview</div>
+      <div class="stream-pair">
+        <div class="sc sci">
+          <div class="sc-lbl" style="color:var(--sci)">SCIENCE</div>
+          <div class="sc-ttl" style="color:var(--sci)">79 Students</div>
+          <div class="sc-stats">
+            <div class="sc-s"><div class="v" style="color:var(--pass)">75</div><div class="l">Passed</div></div>
+            <div class="sc-s"><div class="v" style="color:var(--comp)">3</div><div class="l">Comp</div></div>
+            <div class="sc-s"><div class="v" style="color:var(--fail)">1</div><div class="l">ER</div></div>
+            <div class="sc-s"><div class="v" style="color:var(--sci)">71.0%</div><div class="l">Avg</div></div>
+          </div>
+        </div>
+        <div class="sc com">
+          <div class="sc-lbl" style="color:var(--com)">COMMERCE</div>
+          <div class="sc-ttl" style="color:var(--com)">8 Students</div>
+          <div class="sc-stats">
+            <div class="sc-s"><div class="v" style="color:var(--pass)">7</div><div class="l">Passed</div></div>
+            <div class="sc-s"><div class="v" style="color:var(--comp)">1</div><div class="l">Comp</div></div>
+            <div class="sc-s"><div class="v" style="color:var(--fail)">0</div><div class="l">ER</div></div>
+            <div class="sc-s"><div class="v" style="color:var(--com)">65.4%</div><div class="l">Avg</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="cttl">📋 All Students — Ranked by Best-5 %</div>
+    <div class="pginfo" id="o-pgi"></div>
+    <div class="tw"><table><thead><tr>
+      <th>Rank</th><th>Roll No</th><th>Student Name</th><th>Branch</th><th>Stream</th><th>Best-5 %</th><th>Status</th>
+    </tr></thead><tbody id="o-tb"></tbody></table></div>
+    <div class="pg" id="o-pg"></div>
+  </div>
+</div>
+
+<!-- ══════ SCIENCE ══════ -->
+<div class="section" id="tab-science">
+  <div class="slicers">
+    <span class="sl">Branch</span>
+    <button class="sbtn sci on" onclick="sl('s','br','ALL',this)">All</button>
+    <button class="sbtn sci" onclick="sl('s','br','VISHNUPURI',this)">Vishnupuri</button>
+    <button class="sbtn sci" onclick="sl('s','br','ACADEMY',this)">Academy</button>
+    <div class="div"></div>
+    <span class="sl">Status</span>
+    <button class="sbtn sci on" onclick="sl('s','st','ALL',this)">All</button>
+    <button class="sbtn sci" onclick="sl('s','st','Passed',this)">Passed</button>
+    <button class="sbtn sci" onclick="sl('s','st','Compartment',this)">Compartment</button>
+    <div class="div"></div>
+    <span class="sl">Score Range</span>
+    <button class="sbtn sci on" onclick="sl('s','rn','ALL',this)">All</button>
+    <button class="sbtn sci" onclick="sl('s','rn','90-100',this)">90–100%</button>
+    <button class="sbtn sci" onclick="sl('s','rn','80-90',this)">80–90%</button>
+    <button class="sbtn sci" onclick="sl('s','rn','70-80',this)">70–80%</button>
+    <button class="sbtn sci" onclick="sl('s','rn','60-70',this)">60–70%</button>
+    <button class="sbtn sci" onclick="sl('s','rn','50-60',this)">50–60%</button>
+    <button class="sbtn sci" onclick="sl('s','rn','0-50',this)">&lt;50%</button>
+    <div class="div"></div>
+    <input class="sinp" placeholder="🔍 Search science student…" oninput="srch('s',this.value)">
+  </div>
+  <div class="kpi-row" id="s-kpis"></div>
+  <div class="g3">
+    <div class="card"><div class="cttl" style="color:var(--sci)">📊 Science Best-5 Distribution</div><div id="s-dist"></div></div>
+    <div class="card"><div class="cttl" style="color:var(--sci)">📋 Result Breakdown</div><div class="donut-wrap"><svg width="124" height="124" viewBox="0 0 124 124" id="s-donut"></svg><div class="leg" id="s-leg"></div></div></div>
+    <div class="card"><div class="cttl" style="color:var(--sci)">🏫 Branch Stats</div><div class="bgrid" id="s-branch"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:13px"><div class="cttl" style="color:var(--sci)">📚 Science Subject Averages</div><div id="s-subj"></div></div>
+  <div class="card">
+    <div class="cttl" style="color:var(--sci)">🔬 Science Students — Ranked by Best-5 %</div>
+    <div class="pginfo" id="s-pgi"></div>
+    <div class="tw"><table><thead><tr>
+      <th>Rank</th><th>Roll No</th><th>Student Name</th><th>Branch</th><th>Best-5 %</th><th>Status</th>
+    </tr></thead><tbody id="s-tb"></tbody></table></div>
+    <div class="pg" id="s-pg"></div>
+  </div>
+</div>
+
+<!-- ══════ COMMERCE ══════ -->
+<div class="section" id="tab-commerce">
+  <div class="slicers">
+    <span class="sl">Status</span>
+    <button class="sbtn com on" onclick="sl('c','st','ALL',this)">All</button>
+    <button class="sbtn com" onclick="sl('c','st','Passed',this)">Passed</button>
+    <button class="sbtn com" onclick="sl('c','st','Compartment',this)">Compartment</button>
+    <div class="div"></div>
+    <input class="sinp" placeholder="🔍 Search commerce student…" oninput="srch('c',this.value)">
+  </div>
+  <div class="kpi-row" id="c-kpis"></div>
+  <div class="g3">
+    <div class="card"><div class="cttl" style="color:var(--com)">📊 Commerce Best-5 Distribution</div><div id="c-dist"></div></div>
+    <div class="card"><div class="cttl" style="color:var(--com)">📋 Result Breakdown</div><div class="donut-wrap"><svg width="124" height="124" viewBox="0 0 124 124" id="c-donut"></svg><div class="leg" id="c-leg"></div></div></div>
+    <div class="card"><div class="cttl" style="color:var(--com)">📚 Commerce Subject Averages</div><div id="c-subj"></div></div>
+  </div>
+  <div class="card">
+    <div class="cttl" style="color:var(--com)">📈 Commerce Students — Ranked by Best-5 %</div>
+    <div class="tw"><table><thead><tr>
+      <th>Rank</th><th>Roll No</th><th>Student Name</th><th>Branch</th><th>Best-5 %</th><th>Status</th>
+    </tr></thead><tbody id="c-tb"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ══════ TOPPERS ══════ -->
+<div class="section" id="tab-toppers">
+  <div class="card" style="margin-bottom:13px">
+    <div class="cttl" style="color:var(--accent5)">🏆 Subject-wise Top-3 Scorers</div>
+    <div class="tgrid" id="tgrid"></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="cttl" style="color:var(--accent5)">🥇 Top-10 Students Overall (Best-5 %)</div>
+      <div class="tw"><table><thead><tr>
+        <th>Rank</th><th>Student Name</th><th>Branch</th><th>Stream</th><th>Best-5 %</th><th>Status</th>
+      </tr></thead><tbody id="top10-tb"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="cttl" style="color:var(--accent5)">📊 Subject Topper Scores</div>
+      <div id="topper-bars"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">NLK Academy · XII Result Dashboard 2025–26 · CBSE Centre 849142 · Analysis on Best-5 Subjects %</div>
+</div>
+
+<script>
+const D=[
+  {roll:32652236,name:"AAROHI SRIVASTAVA",br:"VISHNUPURI",st:"Science",b5:67.0,rem:"Passed"},
+  {roll:32652237,name:"ABDULLAH QURASHI",br:"VISHNUPURI",st:"Science",b5:83.4,rem:"Passed"},
+  {roll:32652238,name:"ABHAY PRATAP SINGH",br:"VISHNUPURI",st:"Science",b5:55.8,rem:"Compartment"},
+  {roll:32652239,name:"ADITYA YADAV",br:"VISHNUPURI",st:"Science",b5:73.0,rem:"Passed"},
+  {roll:32652240,name:"AKASH AGNIHOTRI",br:"VISHNUPURI",st:"Science",b5:62.4,rem:"Passed"},
+  {roll:32652241,name:"AKSHARA SONI",br:"VISHNUPURI",st:"Science",b5:71.0,rem:"Passed"},
+  {roll:32652242,name:"ANANT KUMAR",br:"VISHNUPURI",st:"Science",b5:63.0,rem:"Passed"},
+  {roll:32652243,name:"ANIKA TRIPATHI",br:"VISHNUPURI",st:"Science",b5:60.2,rem:"Passed"},
+  {roll:32652244,name:"ANSHIKA CHATURVEDI",br:"VISHNUPURI",st:"Science",b5:76.2,rem:"Passed"},
+  {roll:32652245,name:"ANUSHKA RAJPUT",br:"VISHNUPURI",st:"Science",b5:67.8,rem:"Passed"},
+  {roll:32652246,name:"ANUSHREE GAUTAM",br:"VISHNUPURI",st:"Science",b5:77.8,rem:"Passed"},
+  {roll:32652247,name:"ARCHITA MISHRA",br:"VISHNUPURI",st:"Science",b5:63.2,rem:"Passed"},
+  {roll:32652248,name:"ARIHANT SRIVASTAVA",br:"VISHNUPURI",st:"Science",b5:85.0,rem:"Passed"},
+  {roll:32652249,name:"ARYAN YADAV",br:"VISHNUPURI",st:"Science",b5:64.4,rem:"Passed"},
+  {roll:32652250,name:"ARYAN TRIVEDI",br:"VISHNUPURI",st:"Science",b5:62.2,rem:"Passed"},
+  {roll:32652251,name:"ASTHA NISHAD",br:"VISHNUPURI",st:"Science",b5:73.8,rem:"Passed"},
+  {roll:32652252,name:"ATHARVA GAUTAM",br:"VISHNUPURI",st:"Science",b5:46.8,rem:"Essential repeat"},
+  {roll:32652253,name:"AYUSH NIGAM",br:"VISHNUPURI",st:"Science",b5:65.6,rem:"Passed"},
+  {roll:32652254,name:"AYUSH DUBEY",br:"VISHNUPURI",st:"Science",b5:54.8,rem:"Compartment"},
+  {roll:32652255,name:"AYUSH GUPTA",br:"VISHNUPURI",st:"Science",b5:55.2,rem:"Passed"},
+  {roll:32652256,name:"AYUSH GUPTA",br:"VISHNUPURI",st:"Science",b5:80.8,rem:"Passed"},
+  {roll:32652257,name:"AYUSH TIWARI",br:"VISHNUPURI",st:"Science",b5:88.4,rem:"Passed"},
+  {roll:32652258,name:"AYUSHI DWIVEDI",br:"VISHNUPURI",st:"Science",b5:68.6,rem:"Passed"},
+  {roll:32652259,name:"BISWAJIT BHUYAN",br:"VISHNUPURI",st:"Science",b5:82.0,rem:"Passed"},
+  {roll:32652260,name:"DEVANSH GUPTA",br:"VISHNUPURI",st:"Science",b5:79.0,rem:"Passed"},
+  {roll:32652261,name:"DEVESH BAJPAI",br:"VISHNUPURI",st:"Science",b5:63.8,rem:"Passed"},
+  {roll:32652262,name:"DIVYANSH KUSHWAHA",br:"VISHNUPURI",st:"Science",b5:83.0,rem:"Passed"},
+  {roll:32652263,name:"DIVYANSH RAJ SINGH",br:"VISHNUPURI",st:"Science",b5:70.6,rem:"Passed"},
+  {roll:32652264,name:"DIVYANSHI SACHAN",br:"VISHNUPURI",st:"Science",b5:65.2,rem:"Compartment"},
+  {roll:32652265,name:"DIVYANSHU MISHRA",br:"VISHNUPURI",st:"Science",b5:59.0,rem:"Passed"},
+  {roll:32652266,name:"HARSHIT KUMAR",br:"VISHNUPURI",st:"Science",b5:81.6,rem:"Passed"},
+  {roll:32652267,name:"HIMANSHU NISHAD",br:"VISHNUPURI",st:"Science",b5:65.8,rem:"Passed"},
+  {roll:32652268,name:"HIMANSHU YADAV",br:"VISHNUPURI",st:"Science",b5:80.0,rem:"Passed"},
+  {roll:32652269,name:"JATIN KUMAR",br:"VISHNUPURI",st:"Science",b5:53.0,rem:"Compartment"},
+  {roll:32652270,name:"JATIN KUMAR",br:"VISHNUPURI",st:"Science",b5:64.2,rem:"Passed"},
+  {roll:32652271,name:"JAYESH GUPTA",br:"VISHNUPURI",st:"Science",b5:61.8,rem:"Passed"},
+  {roll:32652272,name:"KAMAD MISRA",br:"VISHNUPURI",st:"Science",b5:73.2,rem:"Passed"},
+  {roll:32652273,name:"KANAK DUBEY",br:"VISHNUPURI",st:"Science",b5:76.2,rem:"Passed"},
+  {roll:32652274,name:"KARTIKEYYA GUPTA",br:"VISHNUPURI",st:"Science",b5:75.8,rem:"Passed"},
+  {roll:32652275,name:"KESHAV TIWARI",br:"VISHNUPURI",st:"Science",b5:66.6,rem:"Passed"},
+  {roll:32652276,name:"KHUSHI YADAV",br:"VISHNUPURI",st:"Science",b5:78.4,rem:"Passed"},
+  {roll:32652277,name:"KRATIKA GUPTA",br:"VISHNUPURI",st:"Science",b5:82.4,rem:"Passed"},
+  {roll:32652278,name:"KRISHNA KUSHWAHA",br:"VISHNUPURI",st:"Science",b5:71.2,rem:"Passed"},
+  {roll:32652279,name:"MOHD AAREZ KHAN",br:"VISHNUPURI",st:"Science",b5:93.2,rem:"Passed"},
+  {roll:32652280,name:"OMKAR SINGH",br:"VISHNUPURI",st:"Science",b5:72.6,rem:"Passed"},
+  {roll:32652281,name:"PALAK KASHYAP",br:"VISHNUPURI",st:"Science",b5:60.8,rem:"Passed"},
+  {roll:32652282,name:"RAUNAK YADAV",br:"VISHNUPURI",st:"Science",b5:61.0,rem:"Passed"},
+  {roll:32652283,name:"RIDDHIMA SHUKLA",br:"VISHNUPURI",st:"Science",b5:65.6,rem:"Compartment"},
+  {roll:32652284,name:"RISHIKA RAWAT",br:"VISHNUPURI",st:"Science",b5:56.2,rem:"Compartment"},
+  {roll:32652285,name:"RITIKA YADAV",br:"VISHNUPURI",st:"Science",b5:52.0,rem:"Essential repeat"},
+  {roll:32652286,name:"RUDRANSH SRIVASTAVA",br:"VISHNUPURI",st:"Science",b5:62.4,rem:"Passed"},
+  {roll:32652287,name:"SAKSHAM BATHAM",br:"VISHNUPURI",st:"Science",b5:52.2,rem:"Compartment"},
+  {roll:32652288,name:"SAMRIDDHI CHAUHAN",br:"VISHNUPURI",st:"Science",b5:77.0,rem:"Passed"},
+  {roll:32652289,name:"SATVIK GUPTA",br:"VISHNUPURI",st:"Science",b5:64.2,rem:"Passed"},
+  {roll:32652290,name:"SHAAN HUSSAIN",br:"VISHNUPURI",st:"Science",b5:68.4,rem:"Passed"},
+  {roll:32652291,name:"SHASHWAT",br:"VISHNUPURI",st:"Science",b5:63.8,rem:"Passed"},
+  {roll:32652292,name:"SHIVAM VERMA",br:"VISHNUPURI",st:"Science",b5:59.2,rem:"Passed"},
+  {roll:32652293,name:"SHRESTH AWASTHI TIWARI",br:"VISHNUPURI",st:"Science",b5:49.6,rem:"Essential repeat"},
+  {roll:32652294,name:"SNEHIL PANDEY",br:"VISHNUPURI",st:"Science",b5:83.8,rem:"Passed"},
+  {roll:32652295,name:"SOUMYA",br:"VISHNUPURI",st:"Science",b5:71.0,rem:"Passed"},
+  {roll:32652296,name:"SURYANSH KUSHWAHA",br:"VISHNUPURI",st:"Science",b5:92.0,rem:"Passed"},
+  {roll:32652297,name:"VAIBHAVI VERMA",br:"VISHNUPURI",st:"Science",b5:52.8,rem:"Essential repeat"},
+  {roll:32652298,name:"SHREYAS JOHARI",br:"ACADEMY",st:"Science",b5:91.4,rem:"Passed"},
+  {roll:32652299,name:"ARSHITA KUSHWAHA",br:"ACADEMY",st:"Science",b5:72.2,rem:"Passed"},
+  {roll:32652300,name:"ASHUTOSH KUMAR",br:"ACADEMY",st:"Science",b5:75.6,rem:"Passed"},
+  {roll:32652301,name:"AYUSH NISHAD",br:"ACADEMY",st:"Science",b5:77.8,rem:"Passed"},
+  {roll:32652302,name:"DEEPRAJ",br:"ACADEMY",st:"Science",b5:59.6,rem:"Passed"},
+  {roll:32652303,name:"GOVIND RAJPUT",br:"ACADEMY",st:"Science",b5:77.6,rem:"Passed"},
+  {roll:32652304,name:"KETAVYA SINGH",br:"ACADEMY",st:"Science",b5:68.8,rem:"Passed"},
+  {roll:32652305,name:"RAGHAV DWIVEDI",br:"ACADEMY",st:"Science",b5:81.4,rem:"Passed"},
+  {roll:32652306,name:"RIDAM AWASTHI",br:"ACADEMY",st:"Science",b5:75.2,rem:"Passed"},
+  {roll:32652307,name:"SANKALP MISHRA",br:"ACADEMY",st:"Science",b5:66.2,rem:"Passed"},
+  {roll:32652308,name:"SANSKAR DIXIT",br:"ACADEMY",st:"Science",b5:72.8,rem:"Passed"},
+  {roll:32652309,name:"TANISH KATIYAR",br:"ACADEMY",st:"Science",b5:78.4,rem:"Passed"},
+  {roll:32652310,name:"ADITI SHARMA",br:"ACADEMY",st:"Science",b5:91.0,rem:"Passed"},
+  {roll:32652311,name:"ARYAN SHUKLA",br:"ACADEMY",st:"Science",b5:76.6,rem:"Passed"},
+  {roll:32652312,name:"NYASHA SRIVASTAVA",br:"ACADEMY",st:"Science",b5:75.2,rem:"Passed"},
+  {roll:32652313,name:"SAUMYA SHUKLA",br:"ACADEMY",st:"Science",b5:78.2,rem:"Passed"},
+  {roll:32652314,name:"SOMYA SHARMA",br:"ACADEMY",st:"Science",b5:75.4,rem:"Passed"},
+  {roll:32652315,name:"ARSH UMRAO",br:"ACADEMY",st:"Commerce",b5:58.8,rem:"Passed"},
+  {roll:32652316,name:"ARYAN BAJPAI",br:"ACADEMY",st:"Commerce",b5:54.4,rem:"Compartment"},
+  {roll:32652317,name:"DEVENDRA RAWAT",br:"ACADEMY",st:"Commerce",b5:64.4,rem:"Passed"},
+  {roll:32652319,name:"NISHITA VERMA",br:"ACADEMY",st:"Commerce",b5:65.8,rem:"Passed"},
+  {roll:32652321,name:"ROHINI PAL",br:"ACADEMY",st:"Commerce",b5:85.2,rem:"Passed"},
+  {roll:32652322,name:"SHRISTI MISHRA",br:"ACADEMY",st:"Commerce",b5:65.6,rem:"Passed"},
+  {roll:32652323,name:"VERSHA SINGH",br:"ACADEMY",st:"Commerce",b5:62.2,rem:"Passed"},
+  {roll:32652324,name:"VISHU KATIYAR",br:"ACADEMY",st:"Commerce",b5:66.8,rem:"Passed"},
+];
+
+const ALL_SUBJ=[["English Core",78.1],["Physics",54.9],["Chemistry",62.5],["Mathematics",47.7],["Biology",57.5],["Hindi Core",87.3],["Computer Sci.",61.2],["Phys. Education",81.6],["Accountancy",45.4],["Business Studies",54.9],["Economics",63.2]];
+const SCI_SUBJ=[["English Core",78.5],["Physics",55.2],["Chemistry",63.1],["Mathematics",51.4],["Biology",57.5],["Hindi Core",87.8],["CS",65.0],["Phys. Edu.",82.1]];
+const COM_SUBJ=[["English Core",76.3],["Computer Sci.",61.4],["Phys. Edu.",82.5],["Accountancy",48.4],["Business Studies",55.0],["Economics",63.8]];
+const TOPPERS={
+  "English Core":[{n:"AYUSH TIWARI",br:"VISHNUPURI",sc:97},{n:"DIVYANSH KUSHWAHA",br:"VISHNUPURI",sc:96},{n:"KRATIKA GUPTA",br:"VISHNUPURI",sc:96}],
+  "Physics":[{n:"MOHD AAREZ KHAN",br:"VISHNUPURI",sc:88},{n:"SURYANSH KUSHWAHA",br:"VISHNUPURI",sc:87},{n:"SHREYAS JOHARI",br:"ACADEMY",sc:75}],
+  "Chemistry":[{n:"SHREYAS JOHARI",br:"ACADEMY",sc:97},{n:"SURYANSH KUSHWAHA",br:"VISHNUPURI",sc:94},{n:"MOHD AAREZ KHAN",br:"VISHNUPURI",sc:94}],
+  "Mathematics":[{n:"SURYANSH KUSHWAHA",br:"VISHNUPURI",sc:92},{n:"MOHD AAREZ KHAN",br:"VISHNUPURI",sc:90},{n:"ADITI SHARMA",br:"ACADEMY",sc:78}],
+  "Biology":[{n:"ADITI SHARMA",br:"ACADEMY",sc:94},{n:"ARYAN SHUKLA",br:"ACADEMY",sc:74},{n:"SOMYA SHARMA",br:"ACADEMY",sc:66}],
+  "Hindi Core":[{n:"ASTHA NISHAD",br:"VISHNUPURI",sc:96},{n:"SHREYAS JOHARI",br:"ACADEMY",sc:95},{n:"ANUSHREE GAUTAM",br:"VISHNUPURI",sc:95}],
+  "Computer Sci.":[{n:"MOHD AAREZ KHAN",br:"VISHNUPURI",sc:91},{n:"BISWAJIT BHUYAN",br:"VISHNUPURI",sc:83},{n:"SNEHIL PANDEY",br:"VISHNUPURI",sc:77}],
+  "Phys. Education":[{n:"HIMANSHU YADAV",br:"VISHNUPURI",sc:99},{n:"MOHD AAREZ KHAN",br:"VISHNUPURI",sc:98},{n:"SHREYAS JOHARI",br:"ACADEMY",sc:97}],
+  "Accountancy":[{n:"ROHINI PAL",br:"ACADEMY",sc:69},{n:"DEVENDRA RAWAT",br:"ACADEMY",sc:50},{n:"NISHITA VERMA",br:"ACADEMY",sc:46}],
+  "Business Studies":[{n:"ROHINI PAL",br:"ACADEMY",sc:89},{n:"DEVENDRA RAWAT",br:"ACADEMY",sc:57},{n:"SHRISTI MISHRA",br:"ACADEMY",sc:54}],
+  "Economics":[{n:"ROHINI PAL",br:"ACADEMY",sc:81},{n:"VISHU KATIYAR",br:"ACADEMY",sc:76},{n:"VERSHA SINGH",br:"ACADEMY",sc:73}],
+};
+
+const COLS=['#00c8ff','#00e5a0','#9b5de5','#ffbe0b','#ff5e57','#ff9f1c','#60a5fa','#34d399','#fb923c','#a78bfa','#38bdf8'];
+const SF={o:{br:'ALL',st:'ALL',rn:'ALL',q:''},s:{br:'ALL',st:'ALL',rn:'ALL',q:''},c:{st:'ALL',q:''}};
+const PG={o:1,s:1,c:1};const PS=15;
+
+function goTab(t,el){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='toppers')renderTop();
+}
+function sl(ctx,key,val,el){
+  SF[ctx][key]=val;PG[ctx]=1;
+  el.closest('.slicers').querySelectorAll(`.sbtn[onclick*="sl('${ctx}','${key}'"]`).forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  render(ctx);
+}
+function srch(ctx,v){SF[ctx].q=v;PG[ctx]=1;render(ctx);}
+function render(ctx){ctx==='o'?rO():ctx==='s'?rS():rC();}
+
+function gf(data,f){
+  return data.filter(s=>{
+    if(f.br&&f.br!=='ALL'&&s.br!==f.br)return false;
+    if(f.st&&f.st!=='ALL'&&s.rem!==f.st)return false;
+    if(f.rn&&f.rn!=='ALL'){
+      const[lo,hi]=f.rn.split('-').map(Number);
+      if(s.b5<lo||s.b5>=hi)return false;
+    }
+    if(f.q){const q=f.q.toLowerCase();if(!s.name.toLowerCase().includes(q)&&!String(s.roll).includes(q))return false;}
+    return true;
+  });
+}
+function pc(p){return p>=90?'#00c8ff':p>=80?'#00e5a0':p>=70?'#9b5de5':p>=60?'#60a5fa':p>=50?'#ffbe0b':'#ff5e57';}
+
+function kpis(id,data){
+  const n=data.length,p=data.filter(s=>s.rem==='Passed').length,co=data.filter(s=>s.rem==='Compartment').length,er=data.filter(s=>s.rem==='Essential repeat').length;
+  const avg=n?(data.reduce((a,s)=>a+s.b5,0)/n).toFixed(1):0,mx=n?Math.max(...data.map(s=>s.b5)).toFixed(1):0;
+  const top=n?data.reduce((a,s)=>s.b5>a.b5?s:a):null,pr=n?((p/n)*100).toFixed(1):0;
+  document.getElementById(id).innerHTML=[
+    {ico:'👥',lbl:'TOTAL STUDENTS',val:n,sub:'Filtered view',c:'var(--accent)'},
+    {ico:'✅',lbl:'PASS RATE',val:pr+'%',sub:`${p} passed`,c:'var(--pass)'},
+    {ico:'📊',lbl:'AVG BEST-5 %',val:avg+'%',sub:'Mean percentage',c:'var(--accent3)'},
+    {ico:'🏆',lbl:'TOP SCORE',val:mx+'%',sub:top?(top.name.split(' ').slice(0,2).join(' ')):'—',c:'var(--accent5)'},
+    {ico:'⚠️',lbl:'NEEDS ATTENTION',val:co+er,sub:`${co} Comp + ${er} ER`,c:'var(--fail)'},
+  ].map(k=>`<div class="kpi" style="--kc:${k.c}"><div class="kpi-ico">${k.ico}</div><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+}
+
+function dist(id,data){
+  const rr=[['90–100%',90,100,'#00c8ff'],['80–90%',80,90,'#00e5a0'],['70–80%',70,80,'#9b5de5'],['60–70%',60,70,'#60a5fa'],['50–60%',50,60,'#ffbe0b'],['< 50%',0,50,'#ff5e57']];
+  const cnts=rr.map(([l,lo,hi,c])=>({l,c,cnt:data.filter(s=>s.b5>=lo&&s.b5<(hi===100?101:hi)).length}));
+  const mx=Math.max(...cnts.map(x=>x.cnt),1);
+  document.getElementById(id).innerHTML=`<div class="dist-wrap">${cnts.map(x=>`<div class="drow"><div class="dlbl" style="color:${x.c}">${x.l}</div><div class="dtrk"><div class="dfill" style="width:${(x.cnt/mx)*100}%;background:${x.c}">${x.cnt>0?x.cnt:''}</div></div><div class="dcount" style="color:${x.c}">${x.cnt}</div></div>`).join('')}</div>`;
+}
+
+function donut(sid,lid,data){
+  const p=data.filter(s=>s.rem==='Passed').length,co=data.filter(s=>s.rem==='Compartment').length,er=data.filter(s=>s.rem==='Essential repeat').length,n=data.length||1;
+  const segs=[{l:'Passed',c:p,col:'#00e5a0'},{l:'Compartment',c:co,col:'#ffbe0b'},{l:'Ess. Repeat',c:er,col:'#ff5e57'}];
+  const r=44,cx=62,cy=62,sw=15,circ=2*Math.PI*r;let cum=0;
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#122239" stroke-width="${sw}"/>`;
+  segs.forEach(g=>{const len=(g.c/n)*circ;if(len>0){s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${g.col}" stroke-width="${sw}" stroke-dasharray="${len} ${circ}" stroke-dashoffset="${-cum}" stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/>`;cum+=len;}});
+  s+=`<text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#dde8f5" font-family="Bebas Neue" font-size="19">${n}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" fill="#5a7a9a" font-size="8" font-family="Sora">STUDENTS</text>`;
+  document.getElementById(sid).innerHTML=s;
+  document.getElementById(lid).innerHTML=segs.map(g=>`<div class="lrow"><div class="ldot" style="background:${g.col}"></div><span class="llbl">${g.l}</span><span class="lval" style="color:${g.col}">${g.c}</span></div>`).join('');
+}
+
+function branch(id,data){
+  const brs=[...new Set(data.map(s=>s.br))];
+  const bc={VISHNUPURI:'var(--sci)',ACADEMY:'var(--accent3)'};
+  document.getElementById(id).innerHTML=brs.map(b=>{
+    const s=data.filter(d=>d.br===b),n=s.length,p=s.filter(d=>d.rem==='Passed').length,avg=(s.reduce((a,d)=>a+d.b5,0)/n).toFixed(1),mx=Math.max(...s.map(d=>d.b5)).toFixed(1),pr=n?((p/n)*100).toFixed(1):0;
+    return `<div class="bblk" style="border-color:${bc[b]||'var(--border)'}44"><div class="bnm" style="color:${bc[b]}">${b}</div><div class="bstat"><span class="bsl">Students</span><span class="bsv" style="color:${bc[b]}">${n}</span></div><div class="bstat"><span class="bsl">Pass Rate</span><span class="bsv" style="color:var(--pass)">${pr}%</span></div><div class="bstat"><span class="bsl">Avg Best-5</span><span class="bsv">${avg}%</span></div><div class="bstat"><span class="bsl">Highest</span><span class="bsv" style="color:var(--accent5)">${mx}%</span></div></div>`;
+  }).join('');
+}
+
+function subjBars(id,arr){
+  document.getElementById(id).innerHTML=`<div class="srows">${arr.map(([nm,v],i)=>`<div class="srow"><div class="snm">${nm}</div><div class="strk"><div class="sfill" style="width:${v}%;background:${COLS[i%COLS.length]};transition:width ${1+i*0.07}s ease">${v>22?v:''}</div></div><div class="sval">${v}</div></div>`).join('')}</div>`;
+}
+
+function tbl(tbid,piid,pgid,data,ctx,showStream){
+  const sorted=[...data].sort((a,b)=>b.b5-a.b5),n=sorted.length,pages=Math.ceil(n/PS),start=(PG[ctx]-1)*PS,slice=sorted.slice(start,start+PS);
+  if(piid)document.getElementById(piid).textContent=`Showing ${start+1}–${Math.min(start+PS,n)} of ${n} students`;
+  document.getElementById(tbid).innerHTML=slice.map((s,i)=>{
+    const rank=start+i+1,rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'',col=pc(s.b5);
+    const pc2=s.rem==='Passed'?'pp':s.rem==='Compartment'?'pc':'pe';
+    return `<tr><td><span class="rnk ${rc}">#${rank}</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)">${s.roll}</td><td style="font-weight:600">${s.name}</td><td><span class="${s.br==='VISHNUPURI'?'vp':'ac'}">${s.br}</span></td>${showStream?`<td><span class="${s.st==='Science'?'ssci':'scom'}">${s.st}</span></td>`:''}<td><div class="mbar"><div class="mtrk"><div class="mfill" style="width:${s.b5}%;background:${col}"></div></div><span class="pnum" style="color:${col}">${s.b5.toFixed(1)}%</span></div></td><td><span class="pill ${pc2}">${s.rem}</span></td></tr>`;
+  }).join('');
+  if(!pgid)return;
+  let h=`<button class="pgb" onclick="gp('${ctx}',${PG[ctx]-1})" ${PG[ctx]===1?'disabled':''}>← Prev</button>`;
+  for(let p2=1;p2<=pages;p2++){if(p2===1||p2===pages||Math.abs(p2-PG[ctx])<=1)h+=`<button class="pgb ${p2===PG[ctx]?'on':''}" onclick="gp('${ctx}',${p2})">${p2}</button>`;else if(Math.abs(p2-PG[ctx])===2)h+=`<span style="color:var(--muted);font-size:11px;padding:3px 4px">…</span>`;}
+  h+=`<button class="pgb" onclick="gp('${ctx}',${PG[ctx]+1})" ${PG[ctx]===pages?'disabled':''}>Next →</button>`;
+  document.getElementById(pgid).innerHTML=h;
+}
+function gp(ctx,p){const data=gf(ctx==='o'?D:ctx==='s'?D.filter(s=>s.st==='Science'):D.filter(s=>s.st==='Commerce'),SF[ctx]);const pg=Math.ceil(data.length/PS);if(p<1||p>pg)return;PG[ctx]=p;render(ctx);}
+
+function rO(){const data=gf(D,SF.o);kpis('o-kpis',data);dist('o-dist',data);donut('o-donut','o-leg',data);branch('o-branch',data);subjBars('o-subj',ALL_SUBJ);tbl('o-tb','o-pgi','o-pg',data,'o',true);}
+function rS(){const data=gf(D.filter(s=>s.st==='Science'),SF.s);kpis('s-kpis',data);dist('s-dist',data);donut('s-donut','s-leg',data);branch('s-branch',data);subjBars('s-subj',SCI_SUBJ);tbl('s-tb','s-pgi','s-pg',data,'s',false);}
+function rC(){const data=gf(D.filter(s=>s.st==='Commerce'),SF.c);kpis('c-kpis',data);dist('c-dist',data);donut('c-donut','c-leg',data);subjBars('c-subj',COM_SUBJ);tbl('c-tb',null,null,data,'c',false);}
+
+function renderTop(){
+  const rc=['#ffbe0b','#94a3b8','#f97316'];
+  document.getElementById('tgrid').innerHTML=Object.entries(TOPPERS).map(([subj,tops])=>`
+    <div class="tcard">
+      <div class="tsubj"><span>${subj}</span><span style="color:var(--accent5);font-family:'Bebas Neue';font-size:14px">${tops[0].sc}</span></div>
+      <div class="t1row">
+        <div><div class="t1name">🥇 ${tops[0].n}</div><span class="t1branch ${tops[0].br==='VISHNUPURI'?'vp':'ac'}">${tops[0].br}</span></div>
+        <div class="t1score" style="color:${rc[0]}">${tops[0].sc}</div>
+      </div>
+      <div class="t2rows">
+        ${tops.slice(1).map((t,i)=>`<div class="t2row"><span class="t2name">${['🥈','🥉'][i]} ${t.n}</span><span class="t2score" style="color:${rc[i+1]}">${t.sc}</span></div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  const top10=[...D].sort((a,b)=>b.b5-a.b5).slice(0,10);
+  document.getElementById('top10-tb').innerHTML=top10.map((s,i)=>{
+    const col=pc(s.b5),rc2=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    return `<tr><td><span class="rnk ${rc2}">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</span></td><td style="font-weight:600">${s.name}</td><td><span class="${s.br==='VISHNUPURI'?'vp':'ac'}">${s.br}</span></td><td><span class="${s.st==='Science'?'ssci':'scom'}">${s.st}</span></td><td><span class="pnum" style="color:${col}">${s.b5.toFixed(1)}%</span></td><td><span class="pill pp">Passed</span></td></tr>`;
+  }).join('');
+
+  const ts=Object.entries(TOPPERS).map(([s,t])=>([s,t[0].sc])).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('topper-bars').innerHTML=`<div class="srows">${ts.map(([nm,v],i)=>`<div class="srow"><div class="snm">${nm}</div><div class="strk"><div class="sfill" style="width:${v}%;background:${COLS[i%COLS.length]}">${v>18?v:''}</div></div><div class="sval">${v}</div></div>`).join('')}</div>`;
+}
+
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})},1000);
+document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+rO();
+</script>
+</body>
+</html>
